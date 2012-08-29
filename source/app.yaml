@@ -1,0 +1,10 @@
+application: yinzbot
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /twitterbot/bot
+  script: bot.py
+- url: /twitterbot/follow
+  script: follow.py
