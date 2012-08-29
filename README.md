@@ -1,8 +1,8 @@
 Yinzbot
 ==========
 
-An appengine twitter bot to post from a reddit feed.
-
+A google appengine-based twitter bot to post from a reddit feed.
+See it in action [@YinzBot](http://twitter.com/YinzBot)
 
 Configuration
 ----------
