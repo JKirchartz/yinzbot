@@ -30,7 +30,7 @@ class TwitterBot(webapp.RequestHandler):
         auth.set_access_token(config['access_token'], config['access_token_secret'])
         bot = tweepy.API(auth)
         feed = "http://www.reddit.com/r/" + config['subreddit'] + "/.json"
-        feeddata = json.loads(urllib2.urlopen(feed).read()
+        feeddata = json.loads(urllib2.urlopen(feed).read())
 
         output = 'DONE!\n==========\n\nTweets:\n'
         
