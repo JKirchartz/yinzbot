@@ -59,7 +59,7 @@ class TwitterBot(webapp.RequestHandler):
             followers = []
         
             for follower in bot.followers():
-                followers.append(friend.screen_name)
+                followers.append(follower.screen_name)
 
             to_follow = [x for x in followers if x not in friends]
             for user in to_follow:
