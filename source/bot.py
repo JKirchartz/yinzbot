@@ -38,9 +38,9 @@ class TwitterBot(webapp.RequestHandler):
         if 'data' in feeddata and 'children' in feeddata['data']:
             for entry in feeddata['data']['children']:
                 title = str(unicode(entry['data']['title']).encode("utf-8"))
+                subreddit = str(unicode(entry['data']['subreddit']).encode("urf-8"))
                 myid = str(unicode(entry['data']['id']).encode("utf-8"))
                 link = 'http://redd.it/' + myid 
-
                 status = " " + link
 
                 try:
@@ -53,6 +53,10 @@ class TwitterBot(webapp.RequestHandler):
                 res = query.fetch(1)
 
                 if len(res) == 0 and entry['data']['score'] > 5:
+                     
+                    if (len(status) + len(subreddit) + 2) < 140:
+                        status += " #" + subreddit
+                    
                     output +=  status + '\n'
                     
                     try:
