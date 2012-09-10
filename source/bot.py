@@ -14,6 +14,8 @@ import logging
 import time
 import yaml
 import os.path
+import urllib2
+
 
 # ------- Database Handling -----
 class TwitterDB(db.Model):
