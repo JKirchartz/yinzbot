@@ -36,7 +36,7 @@ class TwitterBot(webapp.RequestHandler):
         output = 'DONE!\n==========\n\nTweets:\n'
         
         if 'data' in feeddata and 'children' in feeddata['data']:
-            for entry in feeddate['data']['children']:
+            for entry in feeddata['data']['children']:
                 title = str(unicode(entry['data']['title']).encode("utf-8"))
                 myid = str(unicode(entry['data']['id']).encode("utf-8"))
                 link = 'http://redd.it/' + myid 
