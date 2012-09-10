@@ -29,7 +29,7 @@ __To set it up:__
 1. set up a [Twitter Account](https://twitter.com)
 1. set up a [New Twitter App](https://dev.twitter.com/apps/new)
 1. rename config-sample.yaml to config.yaml
-1. Insert you consumer keys and access tokens for your twitter app
+1. Insert your consumer keys and access tokens for your twitter app
 1. multiple subreddits can be combined with `+`
 1. change username to your Account's name
 1. change appname in app.yaml to the name of your app on appengine
