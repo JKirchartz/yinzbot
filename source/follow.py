@@ -63,8 +63,9 @@ class TwitterBot(webapp.RequestHandler):
 
             to_follow = [x for x in followers if x not in friends]
             for user in to_follow:
-                output += repr(user.screen_name) + '\n'
-                user.follow()
+                output += repr(user) + '\n'
+                bot.create_friendship(user)
+
         except tweepy.TweepError, e:
             logging.warning(e)
 
