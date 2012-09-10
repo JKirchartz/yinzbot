@@ -1,3 +1,4 @@
 source/config.yaml
 source/test.py
 *.pyc
+.DS_store
