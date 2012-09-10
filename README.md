@@ -4,7 +4,14 @@ Yinzbot
 A google appengine-based twitter bot to post from a reddit feed.
 See it in action [@YinzBot](http://twitter.com/YinzBot)
 
-Configuration
+Features
+----------
+1. Tweet reddit posts with a score of 5 or higher
+1. add #hashtag of the subreddit post is in
+1. Auto follow back
+1. post #FF message, selected from users who mention or RT the bot
+
+Setup
 ----------
 Configuration is easy, in the source folder you will find config-sample.yaml that contains:
 
