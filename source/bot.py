@@ -3,13 +3,13 @@
 # --------- Imports --------
 import cgi,urllib
 from google.appengine.api import xmpp
+from google.appengine.api import fetch
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from md5 import md5
 import simplejson as json
 import tweepy
-import feedparser
 import re
 import logging
 import time
@@ -29,33 +29,18 @@ class TwitterBot(webapp.RequestHandler):
         auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
         auth.set_access_token(config['access_token'], config['access_token_secret'])
         bot = tweepy.API(auth)
-        feed = "http://www.reddit.com/r/" + config['subreddit'] + "/.rss"
-        atomxml = feedparser.parse(feed)
-        entries = atomxml['entries']
+        feed = "http://www.reddit.com/r/" + config['subreddit'] + "/.json"
+        feeddata = json.loads(urllib2.urlopen(feed).read()
 
         output = 'DONE!\n==========\n\nTweets:\n'
         
-        if len(entries) != 0:
-            entries.reverse()
-            for x in range(len(entries)):
-                entry = entries[x]
-                title = str(unicode(entry['title']).encode("utf-8"))
-                link = str(unicode(entry['link']).encode("utf-8"))
-                myid = str(unicode(entry['id']).encode("utf-8"))
+        if 'data' in feeddata and 'children' in feeddata['data']:
+            for entry in feeddate['data']['children']:
+                title = str(unicode(entry['data']['title']).encode("utf-8"))
+                myid = str(unicode(entry['data']['id']).encode("utf-8"))
+                link = 'http://redd.it/' + myid 
 
-                if "+" in config['subreddit']:
-                    for i in config['subreddit'].split('+'):
-                        if i in link:
-                            newlink = link.replace("http://www.reddit.com/r/"+i+"/comments/","http://redd.it/")
-                            newlink = re.sub("/[\w]{6,}/$","",newlink)
-                            break
-                        else:
-                            continue
-                else:
-                    newlink = link.replace("http://www.reddit.com/r/"+config['subreddit']+"/comments/","http://redd.it/")
-                    newlink = re.sub("/[\w]{6,}/$","",newlink)
-                    
-                status = " " + newlink
+                status = " " + link
 
                 try:
                     status = title[:(140 - len(status))] + status
@@ -66,7 +51,7 @@ class TwitterBot(webapp.RequestHandler):
                 query.filter('reddit_id =', myid)
                 res = query.fetch(1)
 
-                if len(res) == 0:
+                if len(res) == 0 and entry['data']['score'] > 5:
                     output +=  status + '\n'
                     
                     try:
