@@ -38,7 +38,7 @@ class TwitterBot(webapp.RequestHandler):
         if 'data' in feeddata and 'children' in feeddata['data']:
             for entry in feeddata['data']['children']:
                 title = str(unicode(entry['data']['title']).encode("utf-8"))
-                subreddit = str(unicode(entry['data']['subreddit']).encode("urf-8"))
+                subreddit = str(unicode(entry['data']['subreddit']).encode("utf-8"))
                 myid = str(unicode(entry['data']['id']).encode("utf-8"))
                 link = 'http://redd.it/' + myid 
                 status = " " + link
