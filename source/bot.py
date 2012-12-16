@@ -34,13 +34,13 @@ class TwitterBot(webapp.RequestHandler):
         feeddata = json.loads(urllib2.urlopen(feed).read())
 
         output = 'DONE!\n==========\n\nTweets:\n'
-        
+
         if 'data' in feeddata and 'children' in feeddata['data']:
             for entry in feeddata['data']['children']:
                 title = str(unicode(entry['data']['title']).encode("utf-8"))
                 subreddit = str(unicode(entry['data']['subreddit']).encode("utf-8"))
                 myid = str(unicode(entry['data']['id']).encode("utf-8"))
-                link = 'http://redd.it/' + myid 
+                link = 'http://redd.it/' + myid
                 status = " " + link
 
                 try:
@@ -53,22 +53,26 @@ class TwitterBot(webapp.RequestHandler):
                 res = query.fetch(1)
 
                 if len(res) == 0 and entry['data']['score'] > 5:
-                     
+
                     if (len(status) + len(subreddit) + 2) < 140:
                         status += " #" + subreddit
-                    
+
                     output +=  status + '\n'
-                    
+
                     try:
                         bot.update_status(status)
                     except tweepy.TweepError, e:
                         logging.warning(e)
-                    
+                        continue
+
                     item = TwitterDB()
                     item.reddit_id = myid
                     item.put()
                 else:
                     continue
+                time.sleep(15) # wait a minute before trying to post again
+
+
 
         if time.strftime('%a') == 'Fri':
             output += '\n\nFind new #FF friends:\n----------\n'
@@ -86,10 +90,11 @@ class TwitterBot(webapp.RequestHandler):
                                         output += tweep + '\n'
                                     except tweepy.TweepError, e:
                                         logging.warning(e)
+                                    time.sleep(15) # wait a minute before adding a new friend.
             except tweepy.TweepError, e:
                 logging.warning(e)
 
-        logging.info(output)    
+        logging.info(output)
         self.response.out.write(output)
 
 
