@@ -31,7 +31,7 @@ class TwitterBot(webapp2.RequestHandler):
         feed = "http://www.reddit.com/r/" + config['subreddit'] + "/.json"
         feeddata = json.loads(urllib2.urlopen(feed).read())
 
-        output = 'DONE!\n==========\n\nTweets:\n'
+        output = '<pre>DONE!\n==========\n\nTweets:\n'
 
         if 'data' in feeddata and 'children' in feeddata['data']:
             for entry in feeddata['data']['children']:
@@ -92,6 +92,7 @@ class TwitterBot(webapp2.RequestHandler):
             except tweepy.TweepError, e:
                 logging.warning(e)
 
+        output += '</pre>'
         logging.info(output)
         self.response.out.write(output)
 

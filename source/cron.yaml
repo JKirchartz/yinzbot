@@ -1,7 +1,7 @@
 cron:
 - description: Tweet and followback
-  url: /twitterbot/bot.app
+  url: /twitterbot/bot
   schedule: every 10 mins
 - description: Follow Friday
-  url: /twitterbot/follow.app
+  url: /twitterbot/follow
   schedule: every friday 13:00

@@ -62,6 +62,11 @@ class Status(Model):
                     setattr(status, 'source_url', None)
             elif k == 'retweeted_status':
                 setattr(status, k, Status.parse(api, v))
+            elif k == 'place':
+                if v is not None:
+                    setattr(status, k, Place.parse(api, v))
+                else:
+                    setattr(status, k, None)
             else:
                 setattr(status, k, v)
         return status
@@ -178,6 +183,16 @@ class Friendship(Model):
         return source, target
 
 
+class Category(Model):
+
+    @classmethod
+    def parse(cls, api, json):
+        category = cls(api)
+        for k, v in json.items():
+            setattr(category, k, v)
+        return category
+
+
 class SavedSearch(Model):
 
     @classmethod
@@ -242,7 +257,9 @@ class List(Model):
     @classmethod
     def parse_list(cls, api, json_list, result_set=None):
         results = ResultSet()
-        for obj in json_list['lists']:
+        if isinstance(json_list, dict):
+            json_list = json_list['lists']
+        for obj in json_list:
             results.append(cls.parse(api, obj))
         return results
 
@@ -321,6 +338,70 @@ class IDModel(Model):
             return json['ids']
 
 
+class BoundingBox(Model):
+
+    @classmethod
+    def parse(cls, api, json):
+        result = cls(api)
+        if json is not None:
+            for k, v in json.items():
+                setattr(result, k, v)
+        return result
+
+    def origin(self):
+        """
+        Return longitude, latitude of southwest (bottom, left) corner of
+        bounding box, as a tuple.
+
+        This assumes that bounding box is always a rectangle, which
+        appears to be the case at present.
+        """
+        return tuple(self.coordinates[0][0])
+
+    def corner(self):
+        """
+        Return longitude, latitude of northeast (top, right) corner of
+        bounding box, as a tuple.
+
+        This assumes that bounding box is always a rectangle, which
+        appears to be the case at present.
+        """
+        return tuple(self.coordinates[0][2])
+
+
+class Place(Model):
+
+    @classmethod
+    def parse(cls, api, json):
+        place = cls(api)
+        for k, v in json.items():
+            if k == 'bounding_box':
+                # bounding_box value may be null (None.)
+                # Example: "United States" (id=96683cc9126741d1)
+                if v is not None:
+                    t = BoundingBox.parse(api, v)
+                else:
+                    t = v
+                setattr(place, k, t)
+            elif k == 'contained_within':
+                # contained_within is a list of Places.
+                setattr(place, k, Place.parse_list(api, v))
+            else:
+                setattr(place, k, v)
+        return place
+
+    @classmethod
+    def parse_list(cls, api, json_list):
+        if isinstance(json_list, list):
+            item_list = json_list
+        else:
+            item_list = json_list['result']['places']
+
+        results = ResultSet()
+        for obj in item_list:
+            results.append(cls.parse(api, obj))
+        return results
+
 class ModelFactory(object):
     """
     Used by parsers for creating instances
@@ -334,10 +415,13 @@ class ModelFactory(object):
     friendship = Friendship
     saved_search = SavedSearch
     search_result = SearchResult
+    category = Category
     list = List
     relation = Relation
     relationship = Relationship
 
     json = JSONModel
     ids = IDModel
+    place = Place
+    bounding_box = BoundingBox
 
