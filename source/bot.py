@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 # --------- Imports --------
-import cgi,urllib
+import webapp2,cgi,urllib
 from google.appengine.api import xmpp
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from md5 import md5
 import simplejson as json
@@ -24,7 +22,7 @@ class TwitterDB(db.Model):
 
 
 # ---- The Job Handler --------
-class TwitterBot(webapp.RequestHandler):
+class TwitterBot(webapp2.RequestHandler):
     def get(self):
         config = yaml.load(open(os.path.dirname(__file__) + '/config.yaml', 'r'));
         auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
@@ -44,9 +42,9 @@ class TwitterBot(webapp.RequestHandler):
                 status = " " + link
 
                 try:
-                    status = title[:(140 - len(status))] + status
+                    status = title[:(120 - len(status))] + status
                 except:
-                    status = repr(title[:(140 - len(status))]) + status
+                    status = repr(title[:(120 - len(status))]) + status
 
                 query = TwitterDB.all()
                 query.filter('reddit_id =', myid)
@@ -60,7 +58,7 @@ class TwitterBot(webapp.RequestHandler):
                     output +=  status + '\n'
 
                     try:
-                        bot.update_status(status)
+                        bot.update_status(status,headers={'User-Agent':config['user-agent']})
                     except tweepy.TweepError, e:
                         logging.warning(e)
                         continue
@@ -98,12 +96,4 @@ class TwitterBot(webapp.RequestHandler):
         self.response.out.write(output)
 
 
-application = webapp.WSGIApplication([('/twitterbot/bot', TwitterBot)],
-        debug=True)
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
-
+app = webapp2.WSGIApplication([('/twitterbot/bot',TwitterBot)], debug=True)

@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 # --------- Imports --------
-import cgi,urllib
+import webapp2,cgi,urllib
 from google.appengine.api import xmpp
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from md5 import md5
 import simplejson as json
@@ -67,11 +65,4 @@ class TwitterBot(webapp.RequestHandler):
         self.response.out.write(output)
 
 
-application = webapp.WSGIApplication([('/twitterbot/follow', TwitterBot)],debug=True)
-
-def main():
-    run_wsgi_app(application)
-
-if __name__ == "__main__":
-    main()
-
+app = webapp2.WSGIApplication([('/twitterbot/follow',TwitterBot)], debug=True)
