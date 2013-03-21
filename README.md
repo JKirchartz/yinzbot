@@ -9,7 +9,7 @@ Features
 1. Tweet reddit posts with a score of 5 or higher
 1. add #hashtag of the subreddit post is in
 1. Auto follow back
-1. post #FF message, selected from users who mention or RT the bot
+1. post #FF message, selected from followers who mention or RT the bot
 
 Setup
 ----------
@@ -19,6 +19,7 @@ Configuration is easy, in the source folder you will find config-sample.yaml tha
     consumer_secret: ""
     access_token: ""
     access_token_secret: ""
+    user-agent: '@Yinzbot your friendly neighborhood reddit->twitter bot'
     subreddit: 'pittsburgh+penguins+buccos+steelers+pittsburghlocalmusic'
     username: 'yinzbot'
 
