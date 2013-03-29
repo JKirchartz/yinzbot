@@ -2,7 +2,7 @@
 
 # --------- Imports --------
 import webapp2,cgi,urllib
-from google.appengine.api import xmpp
+from google.appengine.api import xmpp,urlfetch
 from google.appengine.ext import db
 from md5 import md5
 import simplejson as json
@@ -19,8 +19,6 @@ import urllib2
 class TwitterDB(db.Model):
     reddit_id = db.StringProperty()
 
-
-
 # ---- The Job Handler --------
 class TwitterBot(webapp2.RequestHandler):
     def get(self):
@@ -28,8 +26,16 @@ class TwitterBot(webapp2.RequestHandler):
         auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
         auth.set_access_token(config['access_token'], config['access_token_secret'])
         bot = tweepy.API(auth)
-        feed = "http://www.reddit.com/r/" + config['subreddit'] + "/.json"
-        feeddata = json.loads(urllib2.urlopen(feed).read())
+        url = "http://www.reddit.com/r/" + config['subreddit'] + "/.json"
+        headers = {'User-Agent':config['user-agent']}
+        result = urlfetch.fetch(url=url,headers=headers,deadline=30)
+        if result.status_code != 200:
+            output = "reddit feed status = " + str(result.status_code)
+            logging.info(output)
+            self.response.out.write(output)
+            return
+
+        feeddata = json.loads(result.content)
 
         output = '<pre>DONE!\n==========\n\nTweets:\n'
 
@@ -45,6 +51,7 @@ class TwitterBot(webapp2.RequestHandler):
                     status = title[:(120 - len(status))] + status
                 except:
                     status = repr(title[:(120 - len(status))]) + status
+                    output += "\n<<<<< repr >>>>>\n"
 
                 query = TwitterDB.all()
                 query.filter('reddit_id =', myid)
@@ -58,8 +65,8 @@ class TwitterBot(webapp2.RequestHandler):
                     output +=  status + '\n'
 
                     try:
-                        bot.update_status(status,headers={'User-Agent':config['user-agent']})
-                    except tweepy.TweepError, e:
+                        bot.update_status(status,headers=headers)
+                    except (DeadlineExceededError, tweepy.TweepError) as e:
                         logging.warning(e)
                         continue
 
@@ -75,21 +82,22 @@ class TwitterBot(webapp2.RequestHandler):
         if time.strftime('%a') == 'Fri':
             output += '\n\nFind new #FF friends:\n----------\n'
             try:
-                for status in bot.friends_timeline():
+                for status in bot.home_timeline(headers=headers):
                     tweet = repr(status.text)
 
                     if '#FF' in tweet or '#FollowFriday' in tweet:
                         tweeps = set(who.strip('@') for who in tweet.split() if who.startswith("@"))
                         for tweep in tweeps:
-                            for result in  bot.search_users(q=tweep):
+                            for result in  bot.search_users(q=tweep,headers=headers):
                                 if result.screen_name == tweep:
                                     try:
                                         result.follow()
-                                        output += tweep + '\n'
-                                    except tweepy.TweepError, e:
+                                    except (DeadlineExceededError, tweepy.TweepError) as e:
                                         logging.warning(e)
+
+                                    output += tweep + '\n'
                                     time.sleep(15) # wait a minute before adding a new friend.
-            except tweepy.TweepError, e:
+            except (DeadlineExceededError, tweepy.TweepError) as e:
                 logging.warning(e)
 
         output += '</pre>'

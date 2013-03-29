@@ -19,10 +19,11 @@ Configuration is easy, in the source folder you will find config-sample.yaml tha
     consumer_secret: ""
     access_token: ""
     access_token_secret: ""
-    user-agent: '@Yinzbot your friendly neighborhood reddit->twitter bot'
+    user-agent: '@Yinzbot your friendly neighborhood reddit->twitter boti | maintained by /u/jkirchartz'
     subreddit: 'pittsburgh+penguins+buccos+steelers+pittsburghlocalmusic'
     username: 'yinzbot'
 
+Note: Reddit prefers your username in the user-agent.
 
 __To set it up:__
 

@@ -2,6 +2,6 @@ consumer_key: ""
 consumer_secret: ""
 access_token: ""
 access_token_secret: ""
-user-agent: '@Yinzbot your friendly neighborhood reddit->twitter bot'
+user-agent: '@Yinzbot your friendly neighborhood reddit->twitter boti | maintained by /u/jkirchartz'
 subreddit: 'pittsburgh+penguins+buccos+steelers+pittsburghlocalmusic'
 username: 'yinzbot'
