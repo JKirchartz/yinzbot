@@ -10,6 +10,7 @@ Features
 1. add #hashtag of the subreddit post is in
 1. Auto follow back
 1. post #FF message, selected from followers who mention or RT the bot
+1. find new friends via #FF's on your timeline
 
 Setup
 ----------
