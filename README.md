@@ -2,7 +2,12 @@ Yinzbot
 ==========
 
 A google appengine-based twitter bot to post from a reddit feed.
-See it in action [@YinzBot](http://twitter.com/YinzBot)
+~~See it in action [@YinzBot](http://twitter.com/YinzBot)~~
+
+NOTICE:
+---------
+[@YinzBot](http://twitter.com/YinzBot) is no longer tweeting using this codebase, appengine appears to no longer be posting content as of 14 Sep 2016 and I have no idea if any of this code works anymore, this project is no longer maintained and yinzbot's twitter contents are posted by a currently non-public codebase. Sorry for any consternation this may cause.
+
 
 Features
 ----------
@@ -20,7 +25,7 @@ Configuration is easy, in the source folder you will find config-sample.yaml tha
     consumer_secret: ""
     access_token: ""
     access_token_secret: ""
-    user-agent: '@Yinzbot your friendly neighborhood reddit->twitter boti | maintained by /u/jkirchartz'
+    user-agent: '@Yinzbot your friendly neighborhood reddit->twitter bot | maintained by /u/jkirchartz'
     subreddit: 'pittsburgh+penguins+buccos+steelers+pittsburghlocalmusic'
     username: 'yinzbot'
 
